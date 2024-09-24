@@ -1,5 +1,6 @@
 import cv2
 import os
+import time
 from ultralytics import YOLO
 
 # Load YOLOv8 model
@@ -12,6 +13,7 @@ def process_video(video_path, output_folder, frame_interval=15):
     # Create a VideoCapture object to read the video
     cap = cv2.VideoCapture(video_path)
     frame_count = 0
+    video_filename = os.path.basename(video_path).split('.')[0]
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -25,7 +27,8 @@ def process_video(video_path, output_folder, frame_interval=15):
 
             # Check if any of the target classes are detected
             if any(cls in TARGET_CLASSES for cls in results[0].boxes.cls.tolist()):
-                frame_filename = os.path.join(output_folder, f"frame_{frame_count}.jpg")
+                timestamp = time.strftime('%Y%m%d_%H%M%S')
+                frame_filename = os.path.join(output_folder, f"{video_filename}_{timestamp}_frame_{frame_count}.jpg")
                 cv2.imwrite(frame_filename, frame)
                 print(f"Saved {frame_filename}")
 
